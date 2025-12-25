@@ -3,14 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title></title>
+<title>us</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Inter:wght@300;400&display=swap');
+
 :root{
-  --bg1:#0b0e12;
-  --bg2:#121722;
-  --ink:#eee9de;
-  --muted:#b3ada3;
+  --bg1:#0b0d12;
+  --bg2:#1a1020;
+  --rose:#e6b7c8;
+  --ink:#f3eef1;
+  --muted:#b7aeb6;
 }
 
 *{box-sizing:border-box}
@@ -18,9 +21,11 @@
 html,body{
   margin:0;
   height:100%;
-  background:radial-gradient(120% 120% at 50% 10%, #1a2130 0%, var(--bg1) 55%, #07090c 100%);
+  background:
+    radial-gradient(1200px 600px at 70% 10%, rgba(230,183,200,.12), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2));
   color:var(--ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   overflow:hidden;
 }
 
@@ -30,61 +35,73 @@ body{
   justify-content:center;
 }
 
-/* soft breathing light */
-#ambient{
-  position:fixed;
-  inset:-20%;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255,255,255,.04), transparent 60%),
-    radial-gradient(circle at 70% 80%, rgba(255,255,255,.03), transparent 65%);
-  animation: breathe 18s ease-in-out infinite;
-  pointer-events:none;
-}
-
-@keyframes breathe{
-  0%,100%{opacity:.45}
-  50%{opacity:.65}
-}
-
-/* vignette */
-#vignette{
+/* floating light particles */
+.particles{
   position:fixed;
   inset:0;
-  background:radial-gradient(circle, transparent 55%, rgba(0,0,0,.55) 100%);
   pointer-events:none;
 }
+.particles span{
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:rgba(230,183,200,.4);
+  border-radius:50%;
+  filter:blur(1px);
+  animation:float 18s linear infinite;
+}
 
-/* grain */
+@keyframes float{
+  from{transform:translateY(110vh) scale(.8)}
+  to{transform:translateY(-10vh) scale(1.2)}
+}
+
 #grain{
   position:fixed;
   inset:0;
   pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
 }
 
+/* main container */
 #app{
   width:100%;
   max-width:760px;
   padding:72px 48px;
+  border-radius:28px;
+  background:rgba(255,255,255,.03);
+  backdrop-filter:blur(14px);
+  box-shadow:
+    0 40px 120px rgba(0,0,0,.5),
+    inset 0 0 0 1px rgba(255,255,255,.05);
   cursor:pointer;
 }
 
+/* text scene */
 .scene{
-  font-size:1.15rem;
+  font-family:'Playfair Display', serif;
+  font-size:1.25rem;
   line-height:2;
-  letter-spacing:.2px;
-  color:var(--ink);
-  white-space:pre-line;
+  letter-spacing:.02em;
+  text-shadow:0 0 24px rgba(230,183,200,.15);
   opacity:0;
   animation:fadeIn 3s forwards;
 }
 
+/* hint */
 .hint{
   margin-top:56px;
   font-size:.75rem;
+  letter-spacing:.25em;
+  text-transform:uppercase;
   color:var(--muted);
-  opacity:.45;
-  transition:opacity 2s;
+  opacity:.6;
+  animation:pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:.4}
+  50%{opacity:.8}
 }
 
 @keyframes fadeIn{
@@ -92,22 +109,33 @@ body{
 }
 
 .fadeOut{
-  animation:fadeOut 1.8s forwards;
+  animation:fadeOut 1.6s forwards;
 }
 
 @keyframes fadeOut{
-  to{opacity:0}
+  to{opacity:0; transform:translateY(-8px)}
 }
 </style>
 </head>
 
 <body>
-<div id="ambient"></div>
+
+<div class="particles" id="particles"></div>
 <div id="grain"></div>
-<div id="vignette"></div>
 <div id="app"></div>
 
 <script>
+/* particles generator */
+const p = document.getElementById("particles");
+for(let i=0;i<22;i++){
+  const s=document.createElement("span");
+  s.style.left=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*18+"s";
+  s.style.opacity=Math.random();
+  s.style.transform=`scale(${Math.random()+.5})`;
+  p.appendChild(s);
+}
+
 const scenes = [
 `we didn’t start with clarity.
 
@@ -180,9 +208,8 @@ function render(){
   if(index < scenes.length - 1){
     const h = document.createElement("div");
     h.className = "hint";
-    h.textContent = "click anywhere";
+    h.textContent = "tap gently";
     app.appendChild(h);
-    setTimeout(()=>h.style.opacity=.25,4000);
   }
 }
 
@@ -199,5 +226,6 @@ app.addEventListener("click",()=>{
 
 render();
 </script>
+
 </body>
 </html>
