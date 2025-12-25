@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Listen na.</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0e1116;
+  --card:rgba(20,24,31,0.88);
+  --text:#eae7e3;
+  --muted:#a7a7a7;
+  --accent:#cbbfae;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100vh;
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
+  color:var(--text);
+}
+
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.main{
+  width:100%;
+  max-width:780px;
+  background:
+    linear-gradient(rgba(14,17,22,.9),rgba(14,17,22,.9)),
+    url("bg.jpg");
+  background-size:cover;
+  background-position:center;
+  border-radius:22px;
+  box-shadow:0 40px 120px rgba(0,0,0,.6);
+  padding:48px 42px;
+  transition:all .6s ease;
+}
+
+.fade{
+  animation:fade .7s ease;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateY(12px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+h1,h2{
+  font-family:'Playfair Display',serif;
+  font-weight:400;
+}
+
+p{
+  font-size:17px;
+  line-height:1.75;
+  margin:12px 0;
+}
+
+.muted{
+  color:var(--muted);
+}
+
+button{
+  margin-top:28px;
+  padding:12px 28px;
+  border-radius:999px;
+  border:1px solid var(--accent);
+  background:transparent;
+  color:var(--accent);
+  font-size:15px;
+  cursor:pointer;
+  transition:all .3s ease;
+}
+
+button:hover{
+  background:var(--accent);
+  color:#0e1116;
+}
+
+img{
+  width:100%;
+  border-radius:14px;
+  margin-top:22px;
+  opacity:.92;
+}
+
+.footer-note{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:24px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="main fade" id="card"></div>
+
+<script>
+const scenes = [
+{
+  html: `
+  <p>Hi.</p>
+  <p class="muted">
+    I know you forget things sometimes.<br>
+    So don’t worry — I remember.
+  </p>
+  <p>
+    You always treat me like a kid.<br>
+    So today, sit with me.
+  </p>
+  `,
+  btn:"Okay, tell me"
+},
+{
+  html: `
+  <p>Babe… do you remember how we started?</p>
+  <p>
+    We were just talking about school work.<br>
+    I didn’t even have my own phone.
+  </p>
+  <p>
+    You texted me on my mom’s phone.<br>
+    And still — you sounded different.
+  </p>
+  <p class="muted">
+    I deleted messages because I liked you too much.
+  </p>
+  `,
+  btn:"I remember this"
+},
+{
+  html: `
+  <p>
+    When you confessed, it wasn’t dramatic.<br>
+    It was calm. Honest. Heart to heart.
+  </p>
+  <p>
+    We skipped the noise and landed exactly
+    where we belonged.
+  </p>
+  `,
+  btn:"That was us"
+},
+{
+  html: `
+  <p>
+    We didn’t talk in class.<br>
+    We knew — but pretended not to.
+  </p>
+  <p>
+    Your friends teased you.<br>
+    I got scared. I sent you away.
+  </p>
+  <p class="muted">
+    That was our first fight.
+  </p>
+  `,
+  btn:"I stayed"
+},
+{
+  html: `
+  <p>
+    Then Covid came.<br>
+    I was focused. You weren’t.
+  </p>
+  <p>
+    And still — you chose my teachers.<br>
+    My school. My path.
+  </p>
+  <p class="muted">
+    You chose me.
+  </p>
+  `,
+  btn:"Always"
+},
+{
+  html: `
+  <p>
+    Remember the day I brought your phone home?
+  </p>
+  <p>
+    That saved name.<br>
+    My dad calling it.
+  </p>
+  <p>
+    And you coming with your mom
+    to get it back.
+  </p>
+  <img src="farewell.jpg">
+  `,
+  btn:"I was nervous too"
+},
+{
+  html: `
+  <p>
+    Twelfth farewell.<br>
+    Your birthday.
+  </p>
+  <p>
+    Secret hands.<br>
+    Open pictures.
+  </p>
+  <p class="muted">
+    Happiest day of my life.
+  </p>
+  `,
+  btn:"I know"
+},
+{
+  html: `
+  <p>
+    Canada.<br>
+    12–13 hour difference.
+  </p>
+  <p>
+    Still movies together.<br>
+    Still meals together.
+  </p>
+  <p>
+    Delhi. Agra.<br>
+    Our first wonder together.
+  </p>
+  <img src="city.jpg">
+  `,
+  btn:"We’ll see all of them"
+},
+{
+  html: `
+  <p>
+    You still treat me like a kid.
+  </p>
+  <p>
+    You protect me.<br>
+    You calm me.<br>
+    You stay.
+  </p>
+  <p class="muted">
+    So if you forget details… it’s okay.
+  </p>
+  <h2>Happy six years, my baby.</h2>
+  <p>Come grow old with me.</p>
+  <div class="footer-note">
+    now go drink water and sleep properly
+  </div>
+  `,
+  btn:null
+}
+];
+
+let step = 0;
+const card = document.getElementById("card");
+
+function render(){
+  card.classList.remove("fade");
+  void card.offsetWidth;
+  card.classList.add("fade");
+
+  card.innerHTML = scenes[step].html;
+
+  if(scenes[step].btn){
+    const b = document.createElement("button");
+    b.innerText = scenes[step].btn;
+    b.onclick = () => {
+      step++;
+      render();
+    };
+    card.appendChild(b);
+  }
+}
+
+render();
+</script>
+
+</body>
+</html>
