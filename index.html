@@ -9,11 +9,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Inter:wght@300;400&display=swap');
 
 :root{
-  --bg1:#0b0d12;
-  --bg2:#1a0f1c;
-  --rose:#e7b6c7;
-  --ink:#f5eff3;
-  --muted:#b9b0b8;
+  --bg1:#120611;
+  --bg2:#2a0e1d;
+  --pink:#ff7aa2;
+  --rose:#f3b3c7;
+  --ink:#fff4f8;
+  --muted:#e2b8c6;
 }
 
 *{box-sizing:border-box}
@@ -22,7 +23,7 @@ html,body{
   margin:0;
   height:100%;
   background:
-    radial-gradient(900px 500px at 80% 10%, rgba(231,182,199,.14), transparent 60%),
+    radial-gradient(900px 500px at 50% 10%, rgba(255,122,162,.25), transparent 60%),
     linear-gradient(160deg, var(--bg1), var(--bg2));
   color:var(--ink);
   font-family:'Inter', system-ui, sans-serif;
@@ -33,99 +34,99 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
+  animation:heartbeat 6s ease-in-out infinite;
 }
 
-/* ✦ subtle heart particles */
+/* ❤️ HEART BACKGROUND */
 .hearts{
   position:fixed;
   inset:0;
   pointer-events:none;
-  overflow:hidden;
 }
 
 .heart{
   position:absolute;
-  width:14px;
-  height:14px;
-  background:rgba(231,182,199,.18);
+  width:24px;
+  height:24px;
+  background:rgba(255,122,162,.35);
   transform:rotate(45deg);
-  filter:blur(0.5px);
-  animation:rise 22s linear infinite;
+  filter:blur(.3px);
+  animation:floatUp 18s linear infinite;
+  box-shadow:0 0 20px rgba(255,122,162,.4);
 }
 
 .heart::before,
 .heart::after{
   content:"";
   position:absolute;
-  width:14px;
-  height:14px;
+  width:24px;
+  height:24px;
   background:inherit;
   border-radius:50%;
 }
 
-.heart::before{ left:-7px; }
-.heart::after{ top:-7px; }
+.heart::before{ left:-12px; }
+.heart::after{ top:-12px; }
 
-@keyframes rise{
+@keyframes floatUp{
   from{
-    transform:translateY(110vh) rotate(45deg) scale(.6);
+    transform:translateY(110vh) rotate(45deg) scale(.8);
     opacity:0;
   }
-  20%{opacity:.25}
+  15%{opacity:.9}
   to{
-    transform:translateY(-10vh) rotate(45deg) scale(1.1);
+    transform:translateY(-10vh) rotate(45deg) scale(1.2);
     opacity:0;
   }
 }
 
-/* grain */
-#grain{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+/* heartbeat pulse */
+@keyframes heartbeat{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.01)}
 }
 
 /* container */
 #app{
   width:100%;
   max-width:760px;
-  padding:76px 52px;
-  border-radius:30px;
-  background:rgba(255,255,255,.035);
-  backdrop-filter:blur(16px);
+  padding:80px 56px;
+  border-radius:36px;
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(18px);
   box-shadow:
-    0 50px 140px rgba(0,0,0,.55),
-    inset 0 0 0 1px rgba(255,255,255,.05);
+    0 60px 160px rgba(0,0,0,.6),
+    inset 0 0 0 1px rgba(255,255,255,.08);
   cursor:pointer;
 }
 
 /* text */
 .scene{
   font-family:'Playfair Display', serif;
-  font-size:1.28rem;
-  line-height:2.05;
-  letter-spacing:.02em;
+  font-size:1.35rem;
+  line-height:2.1;
+  letter-spacing:.03em;
   text-shadow:
-    0 0 18px rgba(231,182,199,.15),
-    0 0 2px rgba(255,255,255,.1);
+    0 0 28px rgba(255,122,162,.6),
+    0 0 6px rgba(255,255,255,.3);
   opacity:0;
-  animation:fadeIn 3s forwards;
+  animation:fadeIn 2.8s forwards;
 }
 
+/* romantic hint */
 .hint{
-  margin-top:60px;
-  font-size:.72rem;
-  letter-spacing:.3em;
+  margin-top:64px;
+  font-size:.8rem;
+  letter-spacing:.25em;
   text-transform:uppercase;
   color:var(--muted);
-  opacity:.6;
-  animation:pulse 2.6s ease-in-out infinite;
+  opacity:.8;
+  animation:pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse{
-  0%,100%{opacity:.35}
-  50%{opacity:.8}
+  0%,100%{opacity:.5}
+  50%{opacity:1}
 }
 
 @keyframes fadeIn{
@@ -133,13 +134,13 @@ body{
 }
 
 .fadeOut{
-  animation:fadeOut 1.6s forwards;
+  animation:fadeOut 1.4s forwards;
 }
 
 @keyframes fadeOut{
   to{
     opacity:0;
-    transform:translateY(-10px);
+    transform:translateY(-12px);
   }
 }
 </style>
@@ -148,19 +149,18 @@ body{
 <body>
 
 <div class="hearts" id="hearts"></div>
-<div id="grain"></div>
 <div id="app"></div>
 
 <script>
-/* heart generator */
+/* ❤️ generate visible hearts */
 const hearts = document.getElementById("hearts");
-for(let i=0;i<18;i++){
+for(let i=0;i<26;i++){
   const h=document.createElement("div");
   h.className="heart";
   h.style.left=Math.random()*100+"%";
-  h.style.animationDelay=Math.random()*22+"s";
-  h.style.opacity=Math.random()*.4;
-  h.style.transform=`scale(${Math.random()+.4}) rotate(45deg)`;
+  h.style.animationDelay=Math.random()*18+"s";
+  h.style.opacity=Math.random()*.9;
+  h.style.transform=`scale(${Math.random()+.6}) rotate(45deg)`;
   hearts.appendChild(h);
 }
 
@@ -183,7 +183,7 @@ our lives began moving side by side.
 not announced.
 not promised.
 
-just… aligned.`,
+just… in love.`,
 
 `there were moments
 when the world felt closer.
@@ -192,35 +192,34 @@ when space collapsed
 and we fit into the same frame.
 
 ordinary days became unforgettable
-just by standing next to each other.`,
+because it was you.`,
 
 `then space returned.
 
 louder this time.
 
-but by then,
-we already knew
-how to exist quietly together.`,
+but love had already learned
+how to survive distance.`,
 
-`we learned how to share time
-instead of places.
+`we learned how to miss
+without breaking.
 
-how to eat together
-from different rooms.
+how to wait
+without doubting.
 
-how to be present
-without being visible.`,
+how to love
+without touching.`,
 
 `this is not nostalgia.
 
-this is continuity.
+this is devotion.
 
 this is us —
-still choosing the same pace,
-the same softness,
-the same direction.`,
+choosing each other,
+again and again.`,
 
-`and that’s enough.`
+`and this…
+this is love.`
 ];
 
 let index = 0;
@@ -236,7 +235,7 @@ function render(){
   if(index<scenes.length-1){
     const h=document.createElement("div");
     h.className="hint";
-    h.textContent="tap gently";
+    h.textContent="touch to continue 💗";
     app.appendChild(h);
   }
 }
@@ -247,7 +246,7 @@ app.addEventListener("click",()=>{
     setTimeout(()=>{
       index++;
       render();
-    },1400);
+    },1200);
   }
 });
 
