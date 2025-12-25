@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title> </title>
+<title></title>
 
 <style>
 :root{
-  --bg:#0d0f12;
-  --ink:#e6e1d6;
-  --muted:#9b968c;
-  --soft:#161a1f;
+  --bg:#0e1114;
+  --ink:#ebe6dc;
+  --muted:#b0aaa0;
 }
 
 *{box-sizing:border-box}
@@ -33,60 +32,43 @@ body{
   position:fixed;
   inset:0;
   pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
 }
 
 #app{
   width:100%;
-  max-width:520px;
-  padding:56px 34px;
-  text-align:center;
-}
-
-.question{
-  font-size:1.15rem;
-  line-height:1.7;
-  margin-bottom:44px;
-  opacity:0;
-  animation:fade 2.2s forwards;
-}
-
-.choices{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-
-.choice{
-  padding:15px 18px;
-  background:var(--soft);
-  border-radius:6px;
+  max-width:720px;
+  padding:64px 40px;
+  text-align:left;
   cursor:pointer;
+}
+
+.scene{
+  font-size:1.1rem;
+  line-height:1.9;
   color:var(--ink);
-  opacity:.82;
-  transition:opacity .6s, transform .6s;
-}
-
-.choice:hover{
-  opacity:1;
-  transform:translateY(-1px);
-}
-
-.response{
-  margin-top:52px;
-  font-size:.95rem;
-  line-height:1.75;
-  color:var(--muted);
   opacity:0;
-  animation:fade 3s forwards;
+  animation:fadeIn 2.5s forwards;
 }
 
-.fadeout{
-  animation:fadeOut 3s forwards;
+.hint{
+  margin-top:48px;
+  font-size:.8rem;
+  color:var(--muted);
+  opacity:.6;
 }
 
-@keyframes fade{to{opacity:1}}
-@keyframes fadeOut{to{opacity:0}}
+@keyframes fadeIn{
+  to{opacity:1}
+}
+
+.fadeOut{
+  animation:fadeOut 1.5s forwards;
+}
+
+@keyframes fadeOut{
+  to{opacity:0}
+}
 </style>
 </head>
 
@@ -95,122 +77,93 @@ body{
 <div id="app"></div>
 
 <script>
-let step = 0;
-let burned = false;
+const scenes = [
+`we didn’t start with clarity.
 
-const flow = [
-{
-q:"when the day ends and there’s still so much unsaid — what do you do?",
-c:[
-{t:"keep it light", r:"i notice. i just don’t force you to carry more than you already are."},
-{t:"say nothing", r:"i still listen. silence doesn’t mean absence to me."},
-{t:"tell the truth anyway", r:"i hold it carefully. i always have."}
-]
-},
-{
-q:"when distance reminds us it exists, where does your mind go?",
-c:[
-{t:"to the future", r:"i stay here. because this moment is where we actually meet."},
-{t:"to doubt", r:"i don’t argue with it. i stay steady beside it."},
-{t:"to acceptance", r:"that’s something i learned by loving you this way."}
-]
-},
-{
-q:"when i forget something that mattered to you — what hurts more?",
-c:[
-{t:"that you noticed", r:"i remember quietly. not to prove anything."},
-{t:"that i didn’t say anything", r:"i never wanted you to feel small for it."},
-{t:"that it stayed with you", r:"come here. you don’t have to hold that alone."}
-]
-},
-{
-q:"when it gets hard in ways we don’t talk about — what would you want then?",
-c:[
-{t:"reassurance", r:"i don’t give speeches. i stay."},
-{t:"space", r:"i stay close enough to matter."},
-{t:"nothing", r:"that’s when i show you something." , surprise:true}
-]
-},
-{
-q:"knowing this is imperfect, unfinished, and real — what do you choose?",
-c:[
-{t:"presence", r:"then we’re already aligned."},
-{t:"continuity", r:"that’s how i’ve been loving you."},
-{t:"no answer yet", r:"i’m not in a hurry."}
-]
-}
+we started with pauses.
+with messages that disappeared
+and feelings that stayed.`,
+
+`we learned how to be careful
+before we learned how to be loud.
+
+how to look away in public
+while holding on privately.`,
+
+`at some point,
+our lives began moving side by side.
+
+not announced.
+not promised.
+
+just… aligned.`,
+
+`there were moments
+when the world felt closer.
+
+when space collapsed
+and we fit into the same frame.
+
+ordinary days became unforgettable
+just by standing next to each other.`,
+
+`then space returned.
+
+louder this time.
+
+but by then,
+we already knew
+how to exist quietly together.`,
+
+`we learned how to share time
+instead of places.
+
+how to eat together
+from different rooms.
+
+how to be present
+without being visible.`,
+
+`this is not nostalgia.
+
+this is continuity.
+
+this is us —
+still choosing the same pace,
+the same softness,
+the same direction.`,
+
+`and that’s enough.`
 ];
 
+let index = 0;
 const app = document.getElementById("app");
 
 function render(){
-  const s = flow[step];
   app.innerHTML = "";
+  const s = document.createElement("div");
+  s.className = "scene";
+  s.textContent = scenes[index];
+  app.appendChild(s);
 
-  const q = document.createElement("div");
-  q.className="question";
-  q.textContent = s.q;
-
-  const choices = document.createElement("div");
-  choices.className="choices";
-
-  s.c.forEach(ch=>{
-    const b = document.createElement("div");
-    b.className="choice";
-    b.textContent = ch.t;
-    b.onclick=()=>choose(ch);
-    choices.appendChild(b);
-  });
-
-  app.appendChild(q);
-  app.appendChild(choices);
-}
-
-function choose(ch){
-  app.innerHTML="";
-  const r = document.createElement("div");
-  r.className="response";
-  r.textContent = ch.r;
-  app.appendChild(r);
-
-  if(ch.surprise && !burned){
-    burned=true;
-    setTimeout(surprise,4200);
-  } else {
-    setTimeout(next,6200);
+  if(index < scenes.length - 1){
+    const h = document.createElement("div");
+    h.className = "hint";
+    h.textContent = "click anywhere";
+    app.appendChild(h);
   }
 }
 
-function surprise(){
-  app.innerHTML="";
-  const t = document.createElement("div");
-  t.className="response";
-  t.textContent="this part disappears. like some moments should.";
-  app.appendChild(t);
-
-  setTimeout(()=>{
-    t.classList.add("fadeout");
-  },3000);
-
-  setTimeout(next,6000);
-}
-
-function next(){
-  step++;
-  if(step<flow.length){
-    render();
-  }else{
-    end();
+app.addEventListener("click",()=>{
+  if(index < scenes.length - 1){
+    const current = document.querySelector(".scene");
+    current.classList.add("fadeOut");
+    setTimeout(()=>{
+      index++;
+      render();
+    },1200);
   }
-}
-
-function end(){
-  app.innerHTML="";
-  const t=document.createElement("div");
-  t.className="response";
-  t.textContent="i’m here. that hasn’t changed.";
-  app.appendChild(t);
-}
+});
 
 render();
 </script>
