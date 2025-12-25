@@ -10,10 +10,10 @@
 
 :root{
   --bg1:#0b0d12;
-  --bg2:#1a1020;
-  --rose:#e6b7c8;
-  --ink:#f3eef1;
-  --muted:#b7aeb6;
+  --bg2:#1a0f1c;
+  --rose:#e7b6c7;
+  --ink:#f5eff3;
+  --muted:#b9b0b8;
 }
 
 *{box-sizing:border-box}
@@ -22,10 +22,10 @@ html,body{
   margin:0;
   height:100%;
   background:
-    radial-gradient(1200px 600px at 70% 10%, rgba(230,183,200,.12), transparent 60%),
+    radial-gradient(900px 500px at 80% 10%, rgba(231,182,199,.14), transparent 60%),
     linear-gradient(160deg, var(--bg1), var(--bg2));
   color:var(--ink);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family:'Inter', system-ui, sans-serif;
   overflow:hidden;
 }
 
@@ -35,72 +35,96 @@ body{
   justify-content:center;
 }
 
-/* floating light particles */
-.particles{
+/* ✦ subtle heart particles */
+.hearts{
   position:fixed;
   inset:0;
   pointer-events:none;
+  overflow:hidden;
 }
-.particles span{
+
+.heart{
   position:absolute;
-  width:6px;
-  height:6px;
-  background:rgba(230,183,200,.4);
+  width:14px;
+  height:14px;
+  background:rgba(231,182,199,.18);
+  transform:rotate(45deg);
+  filter:blur(0.5px);
+  animation:rise 22s linear infinite;
+}
+
+.heart::before,
+.heart::after{
+  content:"";
+  position:absolute;
+  width:14px;
+  height:14px;
+  background:inherit;
   border-radius:50%;
-  filter:blur(1px);
-  animation:float 18s linear infinite;
 }
 
-@keyframes float{
-  from{transform:translateY(110vh) scale(.8)}
-  to{transform:translateY(-10vh) scale(1.2)}
+.heart::before{ left:-7px; }
+.heart::after{ top:-7px; }
+
+@keyframes rise{
+  from{
+    transform:translateY(110vh) rotate(45deg) scale(.6);
+    opacity:0;
+  }
+  20%{opacity:.25}
+  to{
+    transform:translateY(-10vh) rotate(45deg) scale(1.1);
+    opacity:0;
+  }
 }
 
+/* grain */
 #grain{
   position:fixed;
   inset:0;
   pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
 }
 
-/* main container */
+/* container */
 #app{
   width:100%;
   max-width:760px;
-  padding:72px 48px;
-  border-radius:28px;
-  background:rgba(255,255,255,.03);
-  backdrop-filter:blur(14px);
+  padding:76px 52px;
+  border-radius:30px;
+  background:rgba(255,255,255,.035);
+  backdrop-filter:blur(16px);
   box-shadow:
-    0 40px 120px rgba(0,0,0,.5),
+    0 50px 140px rgba(0,0,0,.55),
     inset 0 0 0 1px rgba(255,255,255,.05);
   cursor:pointer;
 }
 
-/* text scene */
+/* text */
 .scene{
   font-family:'Playfair Display', serif;
-  font-size:1.25rem;
-  line-height:2;
+  font-size:1.28rem;
+  line-height:2.05;
   letter-spacing:.02em;
-  text-shadow:0 0 24px rgba(230,183,200,.15);
+  text-shadow:
+    0 0 18px rgba(231,182,199,.15),
+    0 0 2px rgba(255,255,255,.1);
   opacity:0;
   animation:fadeIn 3s forwards;
 }
 
-/* hint */
 .hint{
-  margin-top:56px;
-  font-size:.75rem;
-  letter-spacing:.25em;
+  margin-top:60px;
+  font-size:.72rem;
+  letter-spacing:.3em;
   text-transform:uppercase;
   color:var(--muted);
   opacity:.6;
-  animation:pulse 2.5s ease-in-out infinite;
+  animation:pulse 2.6s ease-in-out infinite;
 }
 
 @keyframes pulse{
-  0%,100%{opacity:.4}
+  0%,100%{opacity:.35}
   50%{opacity:.8}
 }
 
@@ -113,27 +137,31 @@ body{
 }
 
 @keyframes fadeOut{
-  to{opacity:0; transform:translateY(-8px)}
+  to{
+    opacity:0;
+    transform:translateY(-10px);
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="particles" id="particles"></div>
+<div class="hearts" id="hearts"></div>
 <div id="grain"></div>
 <div id="app"></div>
 
 <script>
-/* particles generator */
-const p = document.getElementById("particles");
-for(let i=0;i<22;i++){
-  const s=document.createElement("span");
-  s.style.left=Math.random()*100+"%";
-  s.style.animationDelay=Math.random()*18+"s";
-  s.style.opacity=Math.random();
-  s.style.transform=`scale(${Math.random()+.5})`;
-  p.appendChild(s);
+/* heart generator */
+const hearts = document.getElementById("hearts");
+for(let i=0;i<18;i++){
+  const h=document.createElement("div");
+  h.className="heart";
+  h.style.left=Math.random()*100+"%";
+  h.style.animationDelay=Math.random()*22+"s";
+  h.style.opacity=Math.random()*.4;
+  h.style.transform=`scale(${Math.random()+.4}) rotate(45deg)`;
+  hearts.appendChild(h);
 }
 
 const scenes = [
@@ -199,24 +227,23 @@ let index = 0;
 const app = document.getElementById("app");
 
 function render(){
-  app.innerHTML = "";
-  const s = document.createElement("div");
-  s.className = "scene";
-  s.textContent = scenes[index];
+  app.innerHTML="";
+  const s=document.createElement("div");
+  s.className="scene";
+  s.textContent=scenes[index];
   app.appendChild(s);
 
-  if(index < scenes.length - 1){
-    const h = document.createElement("div");
-    h.className = "hint";
-    h.textContent = "tap gently";
+  if(index<scenes.length-1){
+    const h=document.createElement("div");
+    h.className="hint";
+    h.textContent="tap gently";
     app.appendChild(h);
   }
 }
 
 app.addEventListener("click",()=>{
-  if(index < scenes.length - 1){
-    const current = document.querySelector(".scene");
-    current.classList.add("fadeOut");
+  if(index<scenes.length-1){
+    document.querySelector(".scene").classList.add("fadeOut");
     setTimeout(()=>{
       index++;
       render();
